@@ -1,19 +1,69 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-	<meta charset="UTF-8">
-	<title>Document</title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Create articles here</title>
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="css/grayscale.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="font-awesome-4.2.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
 </head>
 <body>
-	<form action="/write" method="post">
-		WRITTEN BY<input type="text" name="userid"></input>
-		<br>
-		TITLE<input type="text" name="title"></input>
-		<br>
-		CONTENTS
-		<textarea rows="3" type="text" name="contents"></textarea>
-		<button>cancel</button>
-		<button>submit</button>
-	</form>
+ <header class="intro">
+  <div class="intro-body">
+  <form class="form-horizontal" method = "post" action= "/write">
+<fieldset>
+<!-- Form Name -->
+<legend>Write your own articles!</legend>
+<!-- <form name="writeArti" method="post" action="/write"> -->
+  <!-- id input-->
+  <div class="col-lg-8 col-lg-offset-2">
+    <div class="control-group">
+      <label class="control-label" for="textinput">INPUT NAME</label>
+      <div class="controls">
+        <input id="textinput" name="userid" type="text" placeholder="input id" class="input-xlarge">
+      </div>
+    </div>
+
+    <!-- Title input-->
+    <div class="control-group">
+      <label class="control-label" for="textinput">INPUT TITLE</label>
+      <div class="controls">
+        <input id="textinput" name="title" type="text" placeholder="input title" class="input-xlarge">
+      </div>
+    </div>
+
+    <!-- Appended Input-->
+    <div class="control-group">
+      <label class="control-label" for="appendedtext">WRITE CONTENTS</label>
+      <div class="controls">
+        <div class="input-append">
+         <textarea rows="5" id="textArea" name="contents" placeholder = "write contents here"></textarea>
+          <span class="add-on"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Button -->
+    <div class="control-group">
+     <!-- <div class="col-lg-10 col-lg-offset-2"> -->
+              <button type="button" class="btn btn-info">Cancel</button>
+              <button type="submit" class="btn btn-info">Submit</button>
+            <!-- </div> -->
+    </div>
+  </div>
+<!-- </form> -->
+</fieldset>
+</form>
+</div>
+</header>
 </body>
 </html>

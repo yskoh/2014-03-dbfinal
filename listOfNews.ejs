@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="listOfNews.css">
+	<title>News List</title>
+</head>
+<body>
+	<div class="header">
+		~님 안녕하세요
+		<div class="rightupper">
+			어떤 이미지
+		</div>
+	</div>	
+	<div class="linenav">
+		<ul>
+			<li>기사 쓰기</li>
+			<li>기사 읽기</li>
+		</ul>
+	</div>		
+	<div class = "listnews">
+		<% console.log(data); %>
+		<ul>
+			<% data.forEach(function (item, index){ %>
+				<li class="news">
+					<img src="keepfocus.png" alt = "image">
+					<div class="shade"></div>
+					<span class="title"><a href=""><%= item.title %></a></span>
+					<span class="reporter"><%= item.userid %></span>
+				</li>
+			<% )}; %>
+		</ul>
+	</div>
+
+</body>
+</html>

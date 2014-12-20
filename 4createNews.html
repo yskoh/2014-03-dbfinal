@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	 <link href="css/bootstrap.min.css" rel="stylesheet">
+	    <link href="font-awesome-4.2.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+	    <link href="css/grayscale.css" rel="stylesheet">
+    <link href="http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+	<title>Document</title>
+</head>
+<body>
+	<form action="/write" method="post">
+		<div class="col-lg-2 col-lg-offset-4">
+			WRITTEN BY<input type="text" name="userid"></input>
+			<br>
+			TITLE<input type="text" name="title"></input>
+			<br>
+			CONTENTS
+			<textarea rows="6" type="text" name="contents"></textarea>
+			<br>
+        	<button type="button" class="btn btn-info">Cancel</button>
+        	<button type="submit" class="btn btn-info">Submit</button>
+        </div>
+	</form>
+</body>
+</html>

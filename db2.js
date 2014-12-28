@@ -5,7 +5,7 @@ var fs = require('fs');
 var mysql = require('mysql');
 var ejs = require('ejs');
 var path = require('path');
-var logger = require('morgan');
+// var logger = require('morgan');
 
 //init
 var connection = mysql.createConnection({
@@ -43,22 +43,12 @@ app.get("/", function(req, res) {
 app.use(cookieParser());
 app.use(bodyParser.urlencoded());
 
+//LOGIN
 app.get("/login", function(req, res){
 	fs.readFile("2login.html", function(error, data){
 		res.writeHead(200, {"Content-Type":"text/html"});
 		res.end(data);
 	});
-});
-
-app.get("/failLogin", function(req, res, next){
-
-	// if(req.cookies.failLogin){
-		res.end('<h1>Login fail</h1>');
-	// }
-	// else{
-	// 	res.redirect('/viewOrWrite');
-	// }
-	// 만약,id는 잇는데 비번이 틀리면 말해주기-> 비번을 다시 입력하라
 });
 
 app.post("/login", function (request, response, next) {
@@ -96,6 +86,19 @@ function handleLogin(userid, password, response) {
 	});
 }
 
+//FAIL LOGIN
+app.get("/failLogin", function(req, res, next){
+
+	// if(req.cookies.failLogin){
+		res.end('<h1>Login fail</h1>');
+	// }
+	// else{
+	// 	res.redirect('/viewOrWrite');
+	// }
+	// 만약,id는 잇는데 비번이 틀리면 말해주기-> 비번을 다시 입력하라
+});
+
+//REGISTER
 app.get("/register", function(req, res){
 	fs.readFile("2register.html", function(error, data){
 		res.writeHead(200, {"Content-Type":"text/html"});
@@ -129,6 +132,7 @@ app.post('/register', function(req,res){
 	//*****만약에 없는 결과이면 리턴. 있는 거면 들어가기
 });
 
+//VIEW OR WRITE
 app.get("/viewOrWrite", function(req, res){
 	fs.readFile("3viewOrWrite.html", function(error,data){
 		res.writeHead(200, {"Content-Type":"text/html"});
@@ -136,7 +140,7 @@ app.get("/viewOrWrite", function(req, res){
 	});
 });
 
-
+//WRITE NEWS
 app.get("/write", function(req, res){
 
 	fs.readFile("4createNews2.html", function(error, data){
@@ -166,6 +170,7 @@ app.post("/write", function(req, res){
 	});
 });
 
+//SHOW COLLECTION OF NEWS
 app.get("/showCollection", function(req, res){
 	var str = 'select * from articles';
 	var query = connection.query(str, function(err, rows){
@@ -182,7 +187,60 @@ app.get("/showCollection", function(req, res){
 	});
 });
 
+//SHOW {SELECTED} NEWS + COMMENTS
 app.get("/showNews", function(req, res){
+	var articleid = req.query.articleid;
+	var str = 'select * from articles where article_id =' + articleid;
+	var query = connection.query(str, function(err1, rows1){
+		if(err1){
+			console.log(err1);
+		}
+		else{
+			var str2 = 'select * from comments where article_id=' + articleid; 
+			var query2 = connection.query(str2, function(err2, rows2){
+				if(err2){
+					console.log(err2);
+				}
+				else{
+					console.log(rows2);
+					var str3= 'select count from likes where article_id='+articleid;
+					var query3=connection.query(str3, function(err3, rows3){
+						if(err3){
+							console.log(err3);
+						}
+						else{
+							console.log(rows3);
+							res.render('showNews.ejs',{
+								data : rows1,
+								comments_data : rows2,
+								likes_data : rows3
+							});
+						}
+					});
+				}
+			});
+		}
+	});
+});
+
+//DELETE
+ app.post("/showNews", function(req, res){
+
+	var deleteid = req.query.articleid;
+	var str = 'delete from articles where article_id ='+ deleteid;
+	var query = connection.query(str, function(err, rows){
+		if(err){
+			console.log(err);
+		}
+		else{
+			res.send(200, 'Your article is deleted!');
+		}
+	});
+
+ });
+
+//EDIT
+app.get("/updateNews", function(req,res){
 	var articleid = req.query.articleid;
 	var str = 'select * from articles where article_id =' + articleid;
 	var query = connection.query(str, function(err, rows){
@@ -190,13 +248,76 @@ app.get("/showNews", function(req, res){
 			console.log(err);
 		}
 		else{
-			res.render('showNews.ejs',
+			res.render('updateNews.ejs',
 				{
 					data : rows
 				});
 		}
 	});
-
 });
+
+app.post("/updateNews", function(req, res){
+	var updateid = req.query.articleid;
+	// console.log(updateid);
+
+	var articles = {
+		// 'article_id': req.body.articleid, 
+		'userid':req.body.userid,
+		// 'date':req.body.date, 
+		'title': req.body.title,
+		'contents': req.body.contents
+	}
+
+	var str = 'update articles set ? where article_id =' + updateid;
+	var query = connection.query(str, articles, function(err, result){
+		if(err){
+			console.log(err);
+		}
+		res.send(200, 'Thank you. Your article is updated!');
+		// res.redirect('/showCollection');
+	});
+});
+
+//COMMENTS
+app.post("/comments", function(req,res){
+	var comment = {
+		'article_id': req.body.articleid,
+		// comment_order
+		'userid':req.body.reporter,
+		// date 
+		'comments': req.body.comments
+	}
+	console.log("article id:" + comment.article_id +", userid: " + comment.userid + ",  comments: " + comment.comments);
+	var str = 'insert into comments set ?';
+	var query = connection.query(str, comment, function(err, result){
+		if(err){
+			console.log(err);
+		}
+		res.send(200, 'Thank you. Your comment is submitted!');
+		// res.redirect('/showCollection'); //특정 기사의 articleid, show page
+	});
+});
+//
+
+//RECOMMEND
+// app.post("/star", function(req, res){
+// 	var like_articleid = req.query.articleid;
+
+// 	var str = 'select count from likes where article_id='+ like_articleid;
+// 	var query1 = connection.query(str, function(err, data){
+// 		if(err){
+// 			console.log(err);
+// 		}
+// 		console.log(data);
+// 		var newData = data+1;
+// 		var sqlStr = 'update likes set count = newData where article_id =' + like_articleid;
+// 		var query = connection.query(sqlStr, recommend, function(err, result){
+// 		if (err){
+// 			console.err(err);
+// 		}
+// 		res.send(200, 'Thank you, your recommendation is submitted!!');
+// 	});
+// 	});
+// });
 
 

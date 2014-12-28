@@ -5,15 +5,53 @@
 	<link rel="stylesheet" href="showNews.css">
 	<title>News List</title>
 </head>
-<body backgound>	
+<body>	
 	<div class = "article">
-		<div class = "title"><%= data[0].title %></div>
-		<div class = "date"<%= data[0].date %>></div>
-		<div class = "reporter"><%= data[0].userid %></div>
-		<div class = "contents"><%= data[0].contents %></div>
-		<div class = "comments"></div>
+		<!-- show article -->
+		<form action="/showNews?articleid=<%= data[0].article_id%>" method="post">
+			<div class = "articleid hidden" name="articleid"><%= data[0].article_id%></div>
+			<div class = "title" name="title"><%= data[0].title %></div>
+			<div class = "date" name="date"><%= data[0].date %></div>
+			<div class = "reporter" name="reporter"><%= data[0].userid %></div>
+			<div class = "contents" name="contents"><%= data[0].contents %></div>
+			<!-- delete -->
+			<div class = "delete">
+				<button type="submit" id="delete">Delete</button>
+			</div>
+		</form>
+		<!-- edit -->
+		<button onclick = "window.location.href='/updateNews?articleid=<%= data[0].article_id%>'" id="update">Edit</button>
+		<!-- comments -->
+		<div class = "comments">
+			<form action="/comments" method="post">
+				<!-- 들어있는 값이 없으면, 에러가 뜨는 문제가 발생하여, if (자료가 있을 때)를 추가 -->
+				<%if(comments_data.length >= 1) { %>
+					<div class = "title" name="order"><%= comments_data[0].comment_order %></div>
+					<div class = "date" name="date"><%= comments_data[0].date %></div>
+					<div class = "reporter" name="reporter"><%= comments_data[0].userid %></div>
+					<div class = "contents" name="contents"><%= comments_data[0].comments %></div>
+				<% } %>
+				<input name="articleid" value="<%= data[0].article_id%>"/>
+				<input name="reporter" value="<%= data[0].userid%>"/>
+				<textarea name="comments" id="comments" cols="30" rows=5><%=data[0].comments%></textarea>
+				<button id="commentSubmit">submit</button>
+				<button id="comment_delete">delete</button>
+			</form>
+		</div>
+		<!-- star -->
+		<div>
+			<form action="/star" method="post">
+				<% if(likes_data.length >= 1){ %>
+					<div class="recNum" name="date"><%=likes_data[0].count%></div>
+				<% } %>
+				<button type="submit" id="star" name="star">recommend</button>
+			</form>
+		</div>
 	</div>
 </body>
+<script>
+	// document.getElementById('recommend').addEventListener('click', function(){
+	// 	//어떻게 서버의 mysql을 불러요??
+	// });
+</script>
 </html>
-
-

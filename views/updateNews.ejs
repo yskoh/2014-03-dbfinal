@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="showNews.css">
+	<title>News List</title>
+</head>
+<body>	
+	<div class = "article">
+		<form action="/updateNews?articleid=<%= data[0].article_id%>" method="post">
+			<div class = "articleid hidden" name="articleid"><%= data[0].article_id%></div>
+			<!-- <div class = "title" name="title"><%= data[0].title %></div> -->
+			<input type="text" id="title" name="title" placeholder="title" value="<%= data[0].title %>" />
+			<div class = "date" name="date"><%= data[0].date %></div>
+			<!-- <div class = "reporter" name="reporter"><%= data[0].userid %></div> -->
+			<input type="text" name="userid" placeholder="name" value="<%= data[0].userid %>">
+			<!-- <div class = "contents" name="contents"><%= data[0].contents %></div> -->
+			<textarea name="contents" id="contents" placeholder="contents" cols="30" rows="10"><%= data[0].contents %></textarea>
+			<button type="submit">Edit</button>
+		</form>
+	</div>
+</body>
+</html>

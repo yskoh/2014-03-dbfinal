@@ -32,15 +32,16 @@
 					<div class = "contents" name="contents"><%= comments_data[0].comments %></div>
 				<% } %>
 				<input name="articleid" value="<%= data[0].article_id%>"/>
-				<input name="reporter" value="<%= data[0].userid%>"/>
-				<textarea name="comments" id="comments" cols="30" rows=5><%=data[0].comments%></textarea>
+				<!-- <input name="title" placeholder="title"/> -->
+				<input name="reporter" placeholder="commenter"/>
+				<textarea name="comments"cols="30" rows=5 placeholder="comments"></textarea>
 				<button id="commentSubmit">submit</button>
 				<button id="comment_delete">delete</button>
 			</form>
 		</div>
 		<!-- star -->
 		<div>
-			<form action="/star" method="post">
+			<form action="/star?articleid=<%= data[0].article_id%>" method="post">
 				<% if(likes_data.length >= 1){ %>
 					<div class="recNum" name="date"><%=likes_data[0].count%></div>
 				<% } %>

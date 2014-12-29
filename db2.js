@@ -13,7 +13,8 @@ var connection = mysql.createConnection({
 	port: 3306,
 	user: 'yskoh',
 	password: '1234',
-	database: 'news'
+	database: 'news',
+	multipleStatements: true
 });
 
 var app = express();
@@ -32,7 +33,7 @@ app.listen(8888, function() {
 
 // URL MAPPING
 app.get("/", function(req, res) {
-	console.log('index');
+	// console.log('index');
 	fs.readFile("index.html", function(error, data) {
 		res.writeHead(200, {"Content-Type": "text/html"});
 		res.end(data);
@@ -107,7 +108,7 @@ app.get("/register", function(req, res){
 });
 
 app.post('/register', function(req,res){
-	console.log(req.body.userid);
+	// console.log(req.body.userid);
 
 	var users = {
 		// 잠깐!! post요청의 parameter를 req.body.{html에서 설정한 name}로 받아온다.
@@ -119,7 +120,7 @@ app.post('/register', function(req,res){
 
 	var str = 'insert into users set ?';
 	//위의 str을 갖고 query를 만들고 실행.
-	//? 자리에 user object를 넣는다 
+	//? 자리에 user object를 넣는다
 	var query = connection.query(str, users, function(err,result) {
 		if (err) {
 			//!!! 여기서는 에러 메세지만 출력하고 에러 처리는 하지 않아요(빠른 테스트를 위해서!)
@@ -202,14 +203,14 @@ app.get("/showNews", function(req, res){
 					console.log(err2);
 				}
 				else{
-					console.log(rows2);
+					// console.log(rows2);
 					var str3= 'select count from likes where article_id='+articleid;
 					var query3=connection.query(str3, function(err3, rows3){
 						if(err3){
 							console.log(err3);
 						}
 						else{
-							console.log(rows3);
+							// console.log(rows3);
 							res.render('showNews.ejs',{
 								data : rows1,
 								comments_data : rows2,
@@ -287,7 +288,7 @@ app.post("/comments", function(req,res){
 		// date 
 		'comments': req.body.comments
 	}
-	console.log("article id:" + comment.article_id +", userid: " + comment.userid + ",  comments: " + comment.comments);
+	// console.log("article id:" + comment.article_id +", userid: " + comment.userid + ",  comments: " + comment.comments);
 	var str = 'insert into comments set ?';
 	var query = connection.query(str, comment, function(err, result){
 		if(err){
@@ -297,27 +298,62 @@ app.post("/comments", function(req,res){
 		// res.redirect('/showCollection'); //특정 기사의 articleid, show page
 	});
 });
-//
+
+
 
 //RECOMMEND
-// app.post("/star", function(req, res){
+app.post("/star", function(req, res){
+	var like_articleid = req.query.articleid;
+	// var sql = 'update articles set ??=??+1 where ??=?';
+	// connection.query(sql, ['count', 'count', 'article_id', like_articleid],function(err, results, fields){
+	// 	if(err){
+	// 		console.log(err);
+	// 	}
+	// 	res.send(200, "Thank you your recommendation has been submitted");
+	// });
+// ******stored proecedure이용해여 성공한 방법***********
+	connection.query("CALL news.addCount(?,@rcount); SELECT @rcount", [like_articleid], function(err, result,fields) {
+	    if (err) {
+	        console.log(err);
+	    }
+	    else {
+	    	console.log(result);
+	    	res.send(200, "Thank you your recommendation has been submitted");
+	    }
+	});
+// *************************************************
+// storedprocedure내용
+// CREATE DEFINER=`yskoh`@`localhost` PROCEDURE `addCount`(IN like_articleid int, OUT rcount int)
+// begin
+// declare inum integer default 0;
+// select count into inum from articles where article_id= like_articleid;
+// update articles set count = inum + 1 where article_id = like_articleid;
+// set rcount:= inum + 1;
+// end
+// ~~~~~~??이거 왜 안될까?~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // 	var like_articleid = req.query.articleid;
+// 	var str = 'select count from articles where article_id =' + like_articleid;
+// 	var query = connection.query(str, function(err1, rows1){
+// 		if(err1){
+// 			console.log(err1);
+// 		}
+// 		else{
+// 			console.log(rows1);
+// 			???var str2 = 'update articles set count = 'rows1.value, rows1, str,(select count from articles where article_id=' + like_articleid + ')...'+1 where article_id=' + like_articleid;
+// 			var query2 = connection.query(str2, function(err2, rows2){
+// 				if(err2){
+// 					console.log(err2);					
+// 				}
+// 				else{
+// 					console.log(rows2);
+// 					res.send(200, "Thank you for your recommendation");
+// 				}
+// 			});
+// 		}
+// 	});
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// 	var str = 'select count from likes where article_id='+ like_articleid;
-// 	var query1 = connection.query(str, function(err, data){
-// 		if(err){
-// 			console.log(err);
-// 		}
-// 		console.log(data);
-// 		var newData = data+1;
-// 		var sqlStr = 'update likes set count = newData where article_id =' + like_articleid;
-// 		var query = connection.query(sqlStr, recommend, function(err, result){
-// 		if (err){
-// 			console.err(err);
-// 		}
-// 		res.send(200, 'Thank you, your recommendation is submitted!!');
-// 	});
-// 	});
-// });
+
+});
 
 
